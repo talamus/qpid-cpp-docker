@@ -45,7 +45,7 @@ jobs:
           CREATED=${{ steps.created.outputs.created }}
           SOURCE_COMMIT=${{ github.sha }}
         tags: |
-          okoko/qpid-cpp:latest
+          talamus/qpid-cpp:latest
         # https://docs.docker.com/build/ci/github-actions/cache/
         cache-from: type=gha
         cache-to: type=gha,mode=max
@@ -54,7 +54,7 @@ jobs:
       id: tag
       run: |
         set -x
-        eval $( docker image inspect okoko/qpid-cpp:latest | sed -n -e 's/.*"\(QPID_\(PROTON\|CPP\)_VERSION=.*\)".*/\1/p' )
+        eval $( docker image inspect talamus/qpid-cpp:latest | sed -n -e 's/.*"\(QPID_\(PROTON\|CPP\)_VERSION=.*\)".*/\1/p' )
         echo "tag=$QPID_CPP_VERSION-$QPID_PROTON_VERSION" >> $GITHUB_OUTPUT
 
     - uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
@@ -66,10 +66,10 @@ jobs:
           CREATED=${{ steps.created.outputs.created }}
           SOURCE_COMMIT=${{ github.sha }}
         tags: |
-          ghcr.io/okoko/qpid-cpp:${{ steps.tag.outputs.tag }}
-          ghcr.io/okoko/qpid-cpp:latest
-          okoko/qpid-cpp:${{ steps.tag.outputs.tag }}
-          okoko/qpid-cpp:latest
+          ghcr.io/talamus/qpid-cpp:${{ steps.tag.outputs.tag }}
+          ghcr.io/talamus/qpid-cpp:latest
+          talamus/qpid-cpp:${{ steps.tag.outputs.tag }}
+          talamus/qpid-cpp:latest
         # https://docs.docker.com/build/ci/github-actions/cache/
         cache-from: type=gha
         cache-to: type=gha,mode=max
@@ -115,4 +115,4 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-        repository: okoko/qpid-cpp
+        repository: talamus/qpid-cpp
