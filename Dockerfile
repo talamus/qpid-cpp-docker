@@ -51,9 +51,9 @@ WORKDIR /usr/src
 
 # See https://github.com/opencontainers/image-spec/blob/master/annotations.md
 LABEL org.opencontainers.image.authors="Marko Kohtala <marko.kohtala@okoko.fi>"
-LABEL org.opencontainers.image.url="https://hub.docker.com/r/okoko/qpid-build"
-LABEL org.opencontainers.image.documentation="https://github.com/okoko/qpid-cpp-docker"
-LABEL org.opencontainers.image.source="https://github.com/okoko/qpid-cpp-docker"
+LABEL org.opencontainers.image.url="https://hub.docker.com/r/talamus/qpid-build"
+LABEL org.opencontainers.image.documentation="https://github.com/talamus/qpid-cpp-docker"
+LABEL org.opencontainers.image.source="https://github.com/talamus/qpid-cpp-docker"
 LABEL org.opencontainers.image.vendor="Software Consulting Kohtala Ltd"
 LABEL org.opencontainers.image.licenses="Apache-2.0"
 LABEL org.opencontainers.image.title="Apache Qpid C++ Broker"
@@ -187,9 +187,9 @@ ARG CREATED
 ARG SOURCE_COMMIT
 # See https://github.com/opencontainers/image-spec/blob/master/annotations.md
 LABEL org.opencontainers.image.authors="Marko Kohtala <marko.kohtala@okoko.fi>"
-LABEL org.opencontainers.image.url="https://hub.docker.com/r/okoko/qpid-cpp"
-LABEL org.opencontainers.image.documentation="https://github.com/okoko/qpid-cpp-docker"
-LABEL org.opencontainers.image.source="https://github.com/okoko/qpid-cpp-docker"
+LABEL org.opencontainers.image.url="https://hub.docker.com/r/talamus/qpid-cpp"
+LABEL org.opencontainers.image.documentation="https://github.com/talamus/qpid-cpp-docker"
+LABEL org.opencontainers.image.source="https://github.com/talamus/qpid-cpp-docker"
 LABEL org.opencontainers.image.vendor="Software Consulting Kohtala Ltd"
 LABEL org.opencontainers.image.licenses="Apache-2.0"
 LABEL org.opencontainers.image.title="Apache Qpid C++ Broker"
