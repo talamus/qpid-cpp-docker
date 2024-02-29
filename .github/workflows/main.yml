@@ -14,20 +14,19 @@ jobs:
     permissions:
       contents: read
       packages: write
-    # strategy:
-    #   matrix:
-    #     platform:
-    #       - linux/amd64
-    #       - linux/arm64
+
     steps:
 
-    - id: prepare
-      run: |
-          platform=${{ matrix.platform }}
-          echo "platform_pair=${platform//\//-}" >> $GITHUB_OUTPUT
-          echo "created=$(date --utc +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-    - uses: actions/checkout@v4
+    - name: Figure out version tag & created date
+      id: vars
+      run: |
+        set -x
+        eval $( cat Dockerfile | sed -n -e 's/ARG \(cpp\|proton\)=/QPID_\U\1_VERSION=/p' )
+        echo "tag=$QPID_CPP_VERSION-$QPID_PROTON_VERSION" >> $GITHUB_OUTPUT
+        echo "created=$(date --utc +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
@@ -53,41 +52,17 @@ jobs:
       with:
         context: .
         push: true
-        tags: talamus/qpid-cpp:latest
-        platforms: linux/amd64,linux/arm64
-        # platforms: ${{ matrix.platform }}
-        labels: ${{ steps.meta.outputs.labels }}
-        # load: true
-        build-args: |
-          CREATED=${{ steps.prepare.outputs.created }}
-          SOURCE_COMMIT=${{ github.sha }}
-        # https://docs.docker.com/build/ci/github-actions/cache/
-        # cache-from: type=gha
-        # cache-to: type=gha,mode=max
-
-    - name: Discover the version tag
-      id: tag
-      run: |
-        set -x
-        eval $( docker image inspect talamus/qpid-cpp:latest | sed -n -e 's/.*"\(QPID_\(PROTON\|CPP\)_VERSION=.*\)".*/\1/p' )
-        echo "tag=$QPID_CPP_VERSION-$QPID_PROTON_VERSION" >> $GITHUB_OUTPUT
-
-    - uses: docker/build-push-action@v5
-      if: github.ref == 'refs/heads/main'
-      with:
-        context: .
-        # platforms: ${{ matrix.platform }}
-        platforms: linux/amd64,linux/arm64
-        labels: ${{ steps.meta.outputs.labels }}
-        push: true
-        build-args: |
-          CREATED=${{ steps.prepare.outputs.created }}
-          SOURCE_COMMIT=${{ github.sha }}
         tags: |
-          ghcr.io/talamus/qpid-cpp:${{ steps.tag.outputs.tag }}
+          ghcr.io/talamus/qpid-cpp:${{ steps.vars.outputs.tag }}
           ghcr.io/talamus/qpid-cpp:latest
-          talamus/qpid-cpp:${{ steps.tag.outputs.tag }}
+          talamus/qpid-cpp:${{ steps.vars.outputs.tag }}
           talamus/qpid-cpp:latest
+        platforms: linux/amd64,linux/arm64
+        labels: ${{ steps.meta.outputs.labels }}
+        # load: true  # Does not work with multiplatform
+        build-args: |
+          CREATED=${{ steps.vars.outputs.created }}
+          SOURCE_COMMIT=${{ github.sha }}
         # https://docs.docker.com/build/ci/github-actions/cache/
         cache-from: type=gha
         cache-to: type=gha,mode=max
@@ -106,7 +81,7 @@ jobs:
             await github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: 'refs/tags/${{ steps.tag.outputs.tag }}',
+              ref: 'refs/tags/${{ steps.vars.outputs.tag }}',
               sha: context.sha,
             });
           } catch(e) {
@@ -114,7 +89,7 @@ jobs:
               await github.rest.git.updateRef({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                ref: 'tags/${{ steps.tag.outputs.tag }}',
+                ref: 'tags/${{ steps.vars.outputs.tag }}',
                 sha: context.sha,
                 force: true,
               });
