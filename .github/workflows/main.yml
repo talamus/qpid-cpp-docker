@@ -56,11 +56,11 @@ jobs:
         tags: talamus/qpid-cpp:latest
         platforms: linux/amd64,linux/arm64
         # platforms: ${{ matrix.platform }}
-        # labels: ${{ steps.meta.outputs.labels }}
+        labels: ${{ steps.meta.outputs.labels }}
         # load: true
-        # build-args: |
-        #   CREATED=${{ steps.prepare.outputs.created }}
-        #   SOURCE_COMMIT=${{ github.sha }}
+        build-args: |
+          CREATED=${{ steps.prepare.outputs.created }}
+          SOURCE_COMMIT=${{ github.sha }}
         # https://docs.docker.com/build/ci/github-actions/cache/
         # cache-from: type=gha
         # cache-to: type=gha,mode=max
